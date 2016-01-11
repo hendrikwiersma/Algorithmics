@@ -1,5 +1,3 @@
-int maxValue = 100000; //It takes about a minute to sort with these settings
-int nrValues = 100000;
 bool exportSorted = false;
 
 public int [] sort(int [] data){
@@ -11,50 +9,54 @@ public int [] sort(int [] data){
     for(int j=i; j>0; j--){
       //if the integer is smaller it shifts the previous value up one index
       if(data[j] < data[j-1]){
-	tmp = data[j];
-	data[j] = data[j-1];
-	data[j-1] = tmp;
+		tmp = data[j];
+		data[j] = data[j-1];
+		data[j-1] = tmp;
       }
     }
   }
   return data;
 }
 
-public int [] generateData(){
-	int[] data = new int[nrValues];
-	for(int i=0; i <= nrValues; i++ ){
-		data[i] = Random.int_range (0, maxValue);
-		//print("value" + (data[i]).to_string() + "\n");
+public int [] generateData(int amount){
+	int[] data = new int[amount];
+	for(int i=0; i <= amount; i++ ){
+		data[i] = Random.int_range (0, amount);
 	}
 	return data;
 }
 
 public void main () {
-	//First get some randomly generated integers
-	int [] data= generateData();
-	//Request the current time to calculate the execution time later
-	GLib.DateTime now = new GLib.DateTime.now_local();
-    	uint64 currentSeconds = now.to_unix();
 
-	sort(data);
-	//Exporting takes a VERY long time so it's off by default
-	if(exportSorted){
-		//Put every sorted value in one string to be able to export it later
-		string output = "";
-		for(int j = 0; j < data.length;j++){
-			output = output + ", " + data[j].to_string();
-		}
-		try {
-			string filename = "sorted.txt";
-			//Finally output the whole string to the text file
-			FileUtils.set_contents (filename, output);
+	int [] amounts = {4105, 6409, 10893, 34530, 35246, 41779, 45747, 48530, 49310, 55247, 63187, 69227, 77733, 82599, 85489, 87379, 87631, 87861, 95783, 96080};
 
-		} catch (FileError e) {
-			//Catch any file errors and print then to the user
-			stderr.printf ("%s\n", e.message);
+	for(int i = 0; i < amounts.length; i++){
+		//First get some randomly generated integers
+		int [] data= generateData(amounts[i]);
+		//Request the current time to calculate the execution time later
+	    int64 msec = GLib.get_real_time ();
+
+		sort(data);
+		float sortingTime = (GLib.get_real_time () - msec);
+		print("It took " + (sortingTime).to_string() + " seconds to sort " + (amounts[i]).to_string() + " values with InsertSort. \n");
+
+		//Exporting takes a VERY long time so it's off by default
+		if(exportSorted){
+			//Put every sorted value in one string to be able to export it later
+			string output = "";
+			for(int j = 0; j < data.length;j++){
+				output = output + ", " + data[j].to_string();
+			}
+			try {
+				string filename = "sorted.txt";
+				//Finally output the whole string to the text file
+				FileUtils.set_contents (filename, output);
+
+			} catch (FileError e) {
+				//Catch any file errors and print then to the user
+				stderr.printf ("%s\n", e.message);
+			}
+			print("Done writing to file. \n");
 		}
 	}
-	//A new DateTime object needs to be created to calculate the difference in time.
-	GLib.DateTime newNow = new GLib.DateTime.now_local();
-	print("It took " + (newNow.to_unix() - currentSeconds).to_string() + " seconds to sort with InsertSort. \n");
 }

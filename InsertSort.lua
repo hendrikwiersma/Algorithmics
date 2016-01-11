@@ -1,5 +1,3 @@
-maxValue = 100000
-nrValues = 100000
 exportSorted = false
 
 InsertSort = {}
@@ -25,29 +23,35 @@ function InsertSort:sort ( data )
   return data
 end
 
-function generateData()
+function generateData(amount)
    data = {}
    --generate a new array with random integer values
-   for i=0, nrValues do
-      data[i] = math.random(maxValue)
+   for i=0, amount do
+      data[i] = math.random(amount)
    end
    return data
 end
 
-   --Get the current time to calculate the execution time later on
-   nClock = os.clock()
+  amounts = {[0]=4105, 6409, 10893, 34530, 35246, 41779, 45747, 48530, 49310, 55247, 63187, 69227, 77733, 82599, 85489, 87379, 87631, 87861, 95783, 96080}
 
-   -- Write every array value
-   result = InsertSort:sort(generateData())
-   if (exportSorted) then
-     --Open up a file in the write mode
-     file = io.open("sorted.txt", "w")
-     --set the output to that file
-     io.output(file)
-     for i=1, #result do
-        io.write(",", result[i])
+  for i=0, #amounts do
+    data = generateData(amounts[i])
+    --Get the current time to calculate the execution time later on
+    nClock = os.clock()
+    -- Write every array value
+    result = InsertSort:sort(data)
+
+     print("The InsertSort took " .. os.clock() - nClock .. " seconds to sort ".. amounts[i] .. " values.")
+     if (exportSorted) then
+       --Open up a file in the write mode
+       file = io.open("sorted.txt", "w")
+       --set the output to that file
+       io.output(file)
+       for i=1, #result do
+          io.write(",", result[i])
+       end
+       io.close(file)
+       print("Done writing to file.")
      end
-     io.close(file)
-   end
-
-   print("The bucketsort took " .. os.clock() - nClock .. " seconds to sort the values.")
+  end
+   
